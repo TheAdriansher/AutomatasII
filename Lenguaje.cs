@@ -113,12 +113,18 @@ namespace Sintaxis3
             if (getClasificacion() == clasificaciones.asignacion)
             {
                 match(clasificaciones.asignacion);
-                
 
                 if (getClasificacion() == clasificaciones.cadena)
                 {           
-                    valor = getContenido();         
-                    match(clasificaciones.cadena);                    
+                    valor = getContenido();    
+                    if (Almacenar == "string")
+                    {
+                        match(clasificaciones.cadena);
+                    }
+                    else
+                    {
+                        throw new Error(bitacora, "Error Semantico: No se puede asignar un STRING a un  (" + Almacenar + ") " + "(" + linea + ", " + caracter + ")"); 
+                    }                     
                 }
                 else 
                 {   
@@ -132,7 +138,7 @@ namespace Sintaxis3
             {
                 l.setValor(nombre, valor);
             }
-                
+            
             if (getContenido() == ",")
             {
                 match(",");
@@ -385,11 +391,12 @@ namespace Sintaxis3
             bool ejecuta = Condicion();
             match(")");
             BloqueInstrucciones(ejecuta && ejecuta2);
+            
 
             if (getContenido() == "else")
             {
                 match("else");
-                BloqueInstrucciones(!(ejecuta && ejecuta2));
+                BloqueInstrucciones(!ejecuta && ejecuta2);
             }
         }
 
