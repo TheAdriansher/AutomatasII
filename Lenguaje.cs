@@ -5,8 +5,8 @@ using System.Text;
 // Requerimiento 1: Implementar el not en el if.
 // Requerimiento 2: Validar la asignacion de strings en Intruccion.
 // Requerimiento 3: Implementar la comparacion de Tipos de datos en Lista_IDs.
-// Requerimiento 4:
-// Requerimiento 5:
+// Requerimiento 4: Validar los tipos de datos en la asignacion del cin.
+// Requerimiento 5: Implementar el cast.
 
 namespace Sintaxis3
 {
@@ -14,6 +14,7 @@ namespace Sintaxis3
     {
         Stack s;
         ListaVariables l;
+        Variable.tipo maxBytes;
         public Lenguaje()
         {            
             s = new Stack(5);
@@ -138,7 +139,7 @@ namespace Sintaxis3
             {
                 l.setValor(nombre, valor);
             }
-            
+
             if (getContenido() == ",")
             {
                 match(",");
@@ -233,13 +234,19 @@ namespace Sintaxis3
                 }
                 else
                 {        
-                    // Requerimiento 3.            
+                    // Requerimiento 3.
+                    maxBytes = Variable.tipo.CHAR;     
                     Expresion();
                     valor = s.pop(bitacora, linea, caracter).ToString();
                     
-                    if (tipoDatoExpresion(float.Parse(valor)) > l.getTipoDato(nombre))
+                    if (tipoDatoExpresion(float.Parse(valor)) > maxBytes)
                     {
-                        throw new Error(bitacora, "Error de sintaxis: No se puede asignar un " + tipoDatoExpresion(float.Parse(valor)) + " a un (" + l.getTipoDato(nombre) + ") " + "(" + linea + ", " + caracter + ")");
+                        maxBytes = tipoDatoExpresion(float.Parse(valor));
+                    }
+
+                    if (maxBytes > l.getTipoDato(nombre))
+                    {
+                        throw new Error(bitacora, "Error semantico: No se puede asignar un " + maxBytes + " a un (" + l.getTipoDato(nombre) + ") " + "(" + linea + ", " + caracter + ")");
                     }
                 }                
 
@@ -308,7 +315,8 @@ namespace Sintaxis3
                     match(clasificaciones.cadena);                    
                 }
                 else
-                {                    
+                {        
+                    maxBytes =  Variable.tipo.CHAR;           
                     Expresion();
                     valor = s.pop(bitacora, linea, caracter).ToString();
                 }                
@@ -403,10 +411,12 @@ namespace Sintaxis3
         // Condicion -> Expresion operadorRelacional Expresion
         private bool Condicion()
         {
+            maxBytes =  Variable.tipo.CHAR;  
             Expresion();
             float n1 = s.pop(bitacora, linea, caracter);
             string operador = getContenido();
             match(clasificaciones.operadorRelacional);
+            maxBytes =  Variable.tipo.CHAR;  
             Expresion();
             float n2 = s.pop(bitacora, linea, caracter);
 
@@ -503,6 +513,11 @@ namespace Sintaxis3
                 string nombre = getContenido();
                 s.display(bitacora);
                 match(clasificaciones.identificador); // Validar existencia
+                
+                if (l.getTipoDato(nombre) > maxBytes)
+                {
+                    maxBytes = l.getTipoDato(nombre);
+                }
 
                 if(!l.Existe(nombre))
                 {
@@ -516,6 +531,12 @@ namespace Sintaxis3
                 // Console.Write(getContenido() + " ");
                 s.push(float.Parse(getContenido()), bitacora, linea, caracter);
                 s.display(bitacora);
+                
+                if (tipoDatoExpresion(float.Parse(getContenido())) > maxBytes)
+                {
+                    maxBytes = tipoDatoExpresion(float.Parse(getContenido()));
+                }
+
                 match(clasificaciones.numero);
             }
             else
