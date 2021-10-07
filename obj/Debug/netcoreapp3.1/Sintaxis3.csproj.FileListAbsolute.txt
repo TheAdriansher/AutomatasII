@@ -1,0 +1,13 @@
+C:\Users\adria\AutomatasII\Sintaxis3\obj\Debug\netcoreapp3.1\Sintaxis3.csprojAssemblyReference.cache
+C:\Users\adria\AutomatasII\Sintaxis3\obj\Debug\netcoreapp3.1\Sintaxis3.AssemblyInfoInputs.cache
+C:\Users\adria\AutomatasII\Sintaxis3\obj\Debug\netcoreapp3.1\Sintaxis3.AssemblyInfo.cs
+C:\Users\adria\AutomatasII\Sintaxis3\obj\Debug\netcoreapp3.1\Sintaxis3.csproj.CoreCompileInputs.cache
+C:\Users\adria\AutomatasII\Sintaxis3\bin\Debug\netcoreapp3.1\Sintaxis3.exe
+C:\Users\adria\AutomatasII\Sintaxis3\bin\Debug\netcoreapp3.1\Sintaxis3.deps.json
+C:\Users\adria\AutomatasII\Sintaxis3\bin\Debug\netcoreapp3.1\Sintaxis3.runtimeconfig.json
+C:\Users\adria\AutomatasII\Sintaxis3\bin\Debug\netcoreapp3.1\Sintaxis3.runtimeconfig.dev.json
+C:\Users\adria\AutomatasII\Sintaxis3\bin\Debug\netcoreapp3.1\Sintaxis3.dll
+C:\Users\adria\AutomatasII\Sintaxis3\bin\Debug\netcoreapp3.1\Sintaxis3.pdb
+C:\Users\adria\AutomatasII\Sintaxis3\obj\Debug\netcoreapp3.1\Sintaxis3.dll
+C:\Users\adria\AutomatasII\Sintaxis3\obj\Debug\netcoreapp3.1\Sintaxis3.pdb
+C:\Users\adria\AutomatasII\Sintaxis3\obj\Debug\netcoreapp3.1\Sintaxis3.genruntimeconfig.cache
