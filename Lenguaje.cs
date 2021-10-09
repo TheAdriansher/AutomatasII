@@ -131,7 +131,18 @@ namespace Sintaxis3
                 {   
                     // Requerimiento 3.                 
                     Expresion();
+                    maxBytes = Variable.tipo.CHAR;
                     valor = s.pop(bitacora, linea, caracter).ToString();
+
+                    if (tipoDatoExpresion(float.Parse(valor)) > maxBytes)
+                    {
+                        maxBytes = tipoDatoExpresion(float.Parse(valor));
+                    }
+
+                    if (maxBytes > l.getTipoDato(nombre))
+                    {
+                        throw new Error(bitacora, "Error semantico: No se puede asignar un " + maxBytes + " a un (" + l.getTipoDato(nombre) + ") " + "(" + linea + ", " + caracter + ")");
+                    }
                 }                 
             }
             
@@ -189,8 +200,34 @@ namespace Sintaxis3
                     
                     if (ejecuta)
                     {
-                        string valor = Console.ReadLine();
-                        
+                        string valor;
+                        if (l.getTipoDato(nombre) == Variable.tipo.STRING)
+                        {
+                            valor = Console.ReadLine();
+                        }
+                        else
+                        {
+                            maxBytes = Variable.tipo.CHAR;
+                            valor = Console.ReadLine();
+                            float salida;
+
+                            if (float.TryParse(valor, out salida))
+                            {
+                                if (tipoDatoExpresion(float.Parse(valor)) > maxBytes)
+                                {
+                                    maxBytes = tipoDatoExpresion(float.Parse(valor));
+                                }
+
+                                if (maxBytes > l.getTipoDato(nombre))
+                                {
+                                    throw new Error(bitacora, "Error semantico: No se puede asignar un " + maxBytes + " a un (" + l.getTipoDato(nombre) + ") " + "(" + linea + ", " + caracter + ")");
+                                }
+                            }
+                            else 
+                            {
+                                throw new Error(bitacora, "Error semantico: No se puede asignar un STRING a un (" + l.getTipoDato(nombre) + ") " + "(" + linea + ", " + caracter + ")");
+                            }
+                        }
                         l.setValor(nombre, valor);
                     }
                 }
@@ -228,15 +265,22 @@ namespace Sintaxis3
                 string valor;
                 // Requerimiento 2.
                 if (getClasificacion() == clasificaciones.cadena)
-                {           
-                    valor = getContenido();         
-                    match(clasificaciones.cadena);                    
+                {
+                    if (l.getTipoDato(nombre) == Variable.tipo.STRING)
+                    {
+                        valor = getContenido();
+                        match(clasificaciones.cadena);
+                    }
+                    else
+                    {
+                        throw new Error(bitacora, "Error Semantico: No se puede asignar un STRING a un  (" + l.getTipoDato(nombre) + ") " + "(" + linea + ", " + caracter + ")"); 
+                    }                               
                 }
                 else
                 {        
-                    // Requerimiento 3.
-                    maxBytes = Variable.tipo.CHAR;     
+                    // Requerimiento 3.   
                     Expresion();
+                    maxBytes = Variable.tipo.CHAR;  
                     valor = s.pop(bitacora, linea, caracter).ToString();
                     
                     if (tipoDatoExpresion(float.Parse(valor)) > maxBytes)
@@ -394,9 +438,20 @@ namespace Sintaxis3
         // If -> if (Condicion) { BloqueInstrucciones } (else BloqueInstrucciones)?
         private void If(bool ejecuta2)
         {
+            bool ejecuta;
             match("if");
             match("(");
-            bool ejecuta = Condicion();
+            if (getContenido() == "!")
+            {
+                match("!");
+                match("(");
+                ejecuta = !Condicion();
+                match(")");
+            }
+            else
+            {
+                ejecuta = Condicion();
+            }
             match(")");
             BloqueInstrucciones(ejecuta && ejecuta2);
             
@@ -564,7 +619,7 @@ namespace Sintaxis3
                     // Para convertir un float a otro tipo de dato redondear el numero para eliminar la parte fraccional.
                     // Para convertir un float a char necesitamos dividir entre 65536/256 y el residuo es el resultado del cast.
                     // Para convertir a float n1 = n1.
-                    // n1 = cast(n1, tipoDato);
+                    //n1 = cast(n1, tipoDato);
                     n1 = cast(n1, tipoDato);
                     s.push(n1, bitacora, linea, caracter);
                     maxBytes = tipoDato;
@@ -681,6 +736,33 @@ namespace Sintaxis3
             }
 
             return tipoVar;
+        }
+
+        private float cast(float n1, Variable.tipo tipoDato)
+        {
+            switch (tipoDato)
+            {
+                case Variable.tipo.CHAR:
+                    if (tipoDatoExpresion(n1) == Variable.tipo.INT)
+                    {
+                        n1 = n1 % 256;
+                    }
+                    else if (tipoDatoExpresion(n1) == Variable.tipo.FLOAT)
+                    {
+                        n1 = (float) Math.Round(n1);
+                        n1 = n1 % 65536 % 256;
+                    }
+                    break;
+                
+                case Variable.tipo.INT:
+                    if (tipoDatoExpresion(n1) == Variable.tipo.FLOAT)
+                    {
+                        n1 = (float) Math.Round(n1);
+                        n1 = n1 % 65536;
+                    }
+                    break;
+            }
+            return n1;
         }
     }
     
